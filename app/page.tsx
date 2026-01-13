@@ -53,17 +53,27 @@ export default function Home() {
 
   return (
     <div style={styles.container}>
-      <header style={styles.header}>
-        <h1 style={styles.title}>100 Anxiety Tips</h1>
-        <p style={styles.subtitle}>Tell me what you're feeling, and I'll help you through it</p>
-      </header>
+      {/* iPhone-style frame */}
+      <div style={styles.iphoneFrame}>
+        {/* iOS Messages header */}
+        <div style={styles.iosHeader}>
+          <div style={styles.headerTop}>
+            <span style={styles.backArrow}>‹</span>
+            <div style={styles.contactInfo}>
+              <img src="/logo.png" alt="100 Tips" style={styles.avatar} />
+              <span style={styles.contactName}>100 Anxiety Tips</span>
+            </div>
+            <div style={styles.headerSpacer}></div>
+          </div>
+        </div>
 
-      <main style={styles.chatContainer}>
-        <div style={styles.messages}>
+        {/* Messages area */}
+        <div style={styles.messagesArea}>
           {messages.length === 0 && (
             <div style={styles.welcome}>
-              <p>👋 Hi there! I'm here to help you with anxiety.</p>
-              <p>Tell me what's on your mind or how you're feeling right now, and I'll share some tips that might help.</p>
+              <p style={styles.welcomeText}>
+                Hey :) I'm your anxiety support buddy with 100+ tips ready to help. What's got you anxious right now?
+              </p>
             </div>
           )}
 
@@ -71,135 +81,210 @@ export default function Home() {
             <div
               key={i}
               style={{
-                ...styles.message,
-                ...(msg.role === 'user' ? styles.userMessage : styles.assistantMessage),
+                ...styles.messageRow,
+                justifyContent: msg.role === 'user' ? 'flex-end' : 'flex-start',
               }}
             >
-              {msg.content}
+              <div
+                style={{
+                  ...styles.bubble,
+                  ...(msg.role === 'user' ? styles.userBubble : styles.assistantBubble),
+                }}
+              >
+                {msg.content}
+              </div>
             </div>
           ))}
 
           {isLoading && (
-            <div style={{ ...styles.message, ...styles.assistantMessage }}>
-              <span style={styles.typing}>Thinking...</span>
+            <div style={{ ...styles.messageRow, justifyContent: 'flex-start' }}>
+              <div style={{ ...styles.bubble, ...styles.assistantBubble, ...styles.typingBubble }}>
+                <div style={styles.typingDots}>
+                  <span style={{ ...styles.dot, animationDelay: '0ms' }}>•</span>
+                  <span style={{ ...styles.dot, animationDelay: '150ms' }}>•</span>
+                  <span style={{ ...styles.dot, animationDelay: '300ms' }}>•</span>
+                </div>
+              </div>
             </div>
           )}
 
           <div ref={messagesEndRef} />
         </div>
 
-        <form onSubmit={sendMessage} style={styles.inputForm}>
+        {/* iOS-style input bar */}
+        <form onSubmit={sendMessage} style={styles.inputBar}>
           <input
             type="text"
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            placeholder="How are you feeling right now?"
-            style={styles.input}
+            placeholder="iMessage"
+            style={styles.textInput}
             disabled={isLoading}
           />
-          <button type="submit" style={styles.button} disabled={isLoading || !input.trim()}>
-            Send
+          <button
+            type="submit"
+            style={{
+              ...styles.sendButton,
+              opacity: input.trim() ? 1 : 0.4,
+            }}
+            disabled={isLoading || !input.trim()}
+          >
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+              <circle cx="12" cy="12" r="12" fill="#007AFF"/>
+              <path d="M12 6L12 18M12 6L7 11M12 6L17 11" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
           </button>
         </form>
-      </main>
+      </div>
+
+      {/* Branding below phone */}
+      <p style={styles.branding}>Powered by 100 Anxiety Tips</p>
     </div>
   )
 }
 
 const styles: { [key: string]: React.CSSProperties } = {
   container: {
-    maxWidth: '600px',
-    margin: '0 auto',
-    padding: '20px',
     minHeight: '100vh',
     display: 'flex',
     flexDirection: 'column',
-  },
-  header: {
-    textAlign: 'center',
-    marginBottom: '20px',
-  },
-  title: {
-    fontSize: '28px',
-    color: '#2d3748',
-    margin: '0 0 8px 0',
-  },
-  subtitle: {
-    fontSize: '16px',
-    color: '#718096',
-    margin: 0,
-  },
-  chatContainer: {
-    flex: 1,
-    display: 'flex',
-    flexDirection: 'column',
-    backgroundColor: '#ffffff',
-    borderRadius: '16px',
-    boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-    overflow: 'hidden',
-  },
-  messages: {
-    flex: 1,
+    alignItems: 'center',
     padding: '20px',
-    overflowY: 'auto',
+  },
+  iphoneFrame: {
+    width: '100%',
+    maxWidth: '400px',
+    height: 'calc(100vh - 100px)',
+    maxHeight: '750px',
+    backgroundColor: '#ffffff',
+    borderRadius: '40px',
+    boxShadow: '0 25px 50px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(0, 0, 0, 0.1)',
     display: 'flex',
     flexDirection: 'column',
-    gap: '12px',
+    overflow: 'hidden',
+    position: 'relative',
+  },
+  iosHeader: {
+    background: 'linear-gradient(180deg, #f8f8f8 0%, #f2f2f7 100%)',
+    padding: '12px 16px 12px 16px',
+    borderBottom: '1px solid #c6c6c8',
+  },
+  headerTop: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  backArrow: {
+    fontSize: '32px',
+    color: '#007AFF',
+    fontWeight: '300',
+    width: '30px',
+  },
+  contactInfo: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    gap: '2px',
+  },
+  avatar: {
+    width: '70px',
+    height: 'auto',
+    objectFit: 'contain',
+  },
+  contactName: {
+    fontSize: '11px',
+    color: '#000',
+    fontWeight: '500',
+  },
+  headerSpacer: {
+    width: '30px',
+  },
+  messagesArea: {
+    flex: 1,
+    overflowY: 'auto',
+    padding: '16px',
+    backgroundColor: '#ffffff',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '8px',
   },
   welcome: {
-    backgroundColor: '#e6f3ff',
-    padding: '20px',
-    borderRadius: '12px',
-    color: '#2d3748',
-    lineHeight: 1.6,
+    textAlign: 'center',
+    padding: '40px 20px',
   },
-  message: {
-    padding: '12px 16px',
-    borderRadius: '16px',
-    maxWidth: '85%',
+  welcomeText: {
+    color: '#8e8e93',
+    fontSize: '15px',
     lineHeight: 1.5,
-    whiteSpace: 'pre-wrap',
+    margin: 0,
   },
-  userMessage: {
-    backgroundColor: '#4a9eff',
-    color: 'white',
-    alignSelf: 'flex-end',
+  messageRow: {
+    display: 'flex',
+    width: '100%',
+  },
+  bubble: {
+    maxWidth: '75%',
+    padding: '10px 14px',
+    borderRadius: '18px',
+    fontSize: '16px',
+    lineHeight: 1.4,
+    whiteSpace: 'pre-wrap',
+    wordWrap: 'break-word',
+  },
+  userBubble: {
+    backgroundColor: '#007AFF',
+    color: '#ffffff',
     borderBottomRightRadius: '4px',
   },
-  assistantMessage: {
-    backgroundColor: '#f0f4f8',
-    color: '#2d3748',
-    alignSelf: 'flex-start',
+  assistantBubble: {
+    backgroundColor: '#e9e9eb',
+    color: '#000000',
     borderBottomLeftRadius: '4px',
   },
-  typing: {
-    opacity: 0.7,
-    fontStyle: 'italic',
+  typingBubble: {
+    paddingTop: '14px',
+    paddingBottom: '14px',
   },
-  inputForm: {
+  typingDots: {
     display: 'flex',
-    gap: '10px',
-    padding: '16px',
-    borderTop: '1px solid #e2e8f0',
+    gap: '4px',
   },
-  input: {
+  dot: {
+    fontSize: '20px',
+    color: '#8e8e93',
+    animation: 'pulse 1s infinite',
+  },
+  inputBar: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px',
+    padding: '8px 12px 24px 12px',
+    backgroundColor: '#f8f8f8',
+    borderTop: '1px solid #c6c6c8',
+  },
+  textInput: {
     flex: 1,
-    padding: '12px 16px',
+    padding: '10px 16px',
     fontSize: '16px',
-    border: '2px solid #e2e8f0',
-    borderRadius: '24px',
+    border: '1px solid #c6c6c8',
+    borderRadius: '20px',
     outline: 'none',
-    transition: 'border-color 0.2s',
+    backgroundColor: '#ffffff',
   },
-  button: {
-    padding: '12px 24px',
-    fontSize: '16px',
-    backgroundColor: '#4a9eff',
-    color: 'white',
+  sendButton: {
+    width: '32px',
+    height: '32px',
     border: 'none',
-    borderRadius: '24px',
+    backgroundColor: 'transparent',
     cursor: 'pointer',
-    fontWeight: '600',
-    transition: 'background-color 0.2s',
+    padding: 0,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  branding: {
+    marginTop: '16px',
+    fontSize: '13px',
+    color: '#5a4a5c',
   },
 }

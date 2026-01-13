@@ -15,7 +15,7 @@ export default function RootLayout({
       <body style={{
         margin: 0,
         fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
-        backgroundColor: '#f0f4f8',
+        background: 'linear-gradient(135deg, #FFF9E6 0%, #FFEEF4 50%, #FFB6D9 100%)',
         minHeight: '100vh'
       }}>
         {children}
